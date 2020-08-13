@@ -14,8 +14,12 @@ validation set approach. Do not forget to set a random seed before
 beginning your analysis.
 (a) Fit a logistic regression model that uses income and balance to
 predict default.
+
+
 (b) Using the validation set approach, estimate the test error of this
 model. In order to do this, you must perform the following steps:
+
+
 i. Split the sample set into a training set and a validation set
 ii. Fit a multiple logistic regression model using only the training
 observations.
