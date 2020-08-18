@@ -15,7 +15,8 @@
        
 
 
-# Exercise. 5
+# Exercise. 5 
+# 
 install.packages('ISLR')
 library(ISLR)
 attach(Default)
