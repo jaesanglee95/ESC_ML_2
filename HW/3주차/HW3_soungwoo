@@ -1,0 +1,74 @@
+3주차 과제 _ 이성우
+
+# Exercise. 1
+
+# 주어진 값 정리
+			 Var(αX+(1−α)Y)
+      =Var(αX)+Var((1-α)Y)+2Cov(aX,(1-α)Y)
+			=〖 α〗^2 σ_X^2+〖(1−α)〗^2 σ_Y^2+2α(1-α)σ_XY
+			=〖 α〗^2 σ_X^2+(1+〖 α〗^2−2α)σ_Y^2+(2α-2α^2)σ_XY
+			= 〖 α〗^2 σ_X^2+σ_Y^2+〖 α〗^2 σ_Y^2−2ασ_Y^2+2ασ_XY−2〖 α〗^2 σ_XY
+# 극솟값 찾기 위해 α 에 대해 미분 
+       ∂/(∂ α)=2ασ_X^2+0+2ασ_Y^2−2σ_Y^2+2σ_XY−4ασ_XY=0
+			(2σ_X^2+2σ_Y^2−4σ_XY)α=2σ_Y^2−2σ_XY
+			α=(σ_Y^2−σ_XY)/(〖(σ〗_X^2+σ_Y^2−2σ_XY)) 
+       
+
+
+# Exercise. 5
+install.packages('ISLR')
+library(ISLR)
+attach(Default)
+set.seed(23)# seed 설정
+
+# 5-a
+fit_glm = glm(default~ balance+income, data=Default, family="binomial")
+summary(fit_glm)
+
+# b
+
+# train set , validation set 으로 분할
+train = sample(nrow(Default), nrow(Default)*0.5)  #replace=F (비복원) 이 default
+
+
+# Fit a multiple logistic regression model using the training observations.
+fit.val_glm = glm(default~balance+income, data=Default, family=binomial, subset = train)
+
+# Obtain a prediction of default status for each individual in the validation set 
+# by computing the posterior probability of default for that individual, 
+# and classifying the individual to the default category 
+# if the posterior probability is greater than 0.5.
+
+glm.probs = predict(fit.val_glm, Default[-train,], type="response")
+glm.pred = ifelse(glm.probs > 0.5, "Yes", "No")
+
+
+# Compute the validation set error, which is the fraction of the observations 
+# in the validation set that are misclassified.
+
+mean(glm.pred !=Default[-train,]$default)
+# validation set 접근법으로 계산한 결과 2.9%의 test error rate 를 보임.
+
+#반복*3
+
+train = sample(nrow(Default), nrow(Default)*0.5) 
+fit.val_glm = glm(default~balance+income, data=Default, family=binomial, subset = train)
+glm.probs = predict(fit.val_glm, Default[-train,], type="response")
+glm.pred = ifelse(glm.probs > 0.5, "Yes", "No")
+mean(glm.pred !=Default[-train,]$default)
+
+
+# 2.44, 2.86, 2.82 % 가 차례로 나옴
+# 어떤 데이터가 train , validation set 에 포함되냐에 따라 test error 의 결과값이 달라질 수 있음
+
+# 더미 변수로 student 추가
+train = sample(nrow(Default), nrow(Default)*0.5) 
+fit.val_glm = glm(default~balance+income+student, data=Default, family=binomial, subset = train)
+glm.probs = predict(fit.val_glm, Default[-train,], type="response")
+glm.pred = ifelse(glm.probs > 0.5, "Yes", "No")
+mean(glm.pred !=Default[-train,]$default)
+
+# 더미 변수에 따른 결과값 큰 차이 없음
+
+
+
