@@ -7,7 +7,7 @@ attach(College)
 
 set.seed(17)
 train = sample(1:dim(College)[1], dim(College)[1] / 2)
-#train / test set À¸·Î ³ª´©±â À§ÇØ indexingn number »ı¼º
+#train / test set ìœ¼ë¡œ ë‚˜ëˆ„ê¸° ìœ„í•´ indexingn number ìƒì„±
 
 test <- -train
 College.train <- College[train, ]
@@ -22,29 +22,29 @@ mean((pred.lm - College.test$Apps)^2)
 # test MSE = 1528357
 
 #c)
-install.packages('glmnet') #glmnet ÇÔ¼ö È°¿ë
+install.packages('glmnet') #glmnet í•¨ìˆ˜ í™œìš©
 library(glmnet)
-train.mat <- model.matrix(Apps ~ ., data = College.train) #Çà·Ä »ı¼º
+train.mat <- model.matrix(Apps ~ ., data = College.train) #í–‰ë ¬ ìƒì„±
 test.mat <- model.matrix(Apps ~ ., data = College.test)
 grid <- 10 ^ seq(4, -2, length = 100)
-fit.ridge <- glmnet(train.mat, College.train$Apps, alpha = 0, lambda = grid, thresh = 1e-12) #¼ö·Å ¼±ÅÃÀÇ ±âÁØ°ªÀ» ÀÇ¹Ì.default´Â 1e-7ÀÌ
+fit.ridge <- glmnet(train.mat, College.train$Apps, alpha = 0, lambda = grid, thresh = 1e-12) #ìˆ˜ë ´ ì„ íƒì˜ ê¸°ì¤€ê°’ì„ ì˜ë¯¸.defaultëŠ” 1e-7ì´
 cv.ridge <- cv.glmnet(train.mat, College.train$Apps, alpha = 0, lambda = grid, thresh = 1e-12)
 bestlam.ridge <- cv.ridge$lambda.min
 bestlam.ridge
   
 pred.ridge <- predict(fit.ridge, s = bestlam.ridge, newx = test.mat)
 mean((pred.ridge - College.test$Apps)^2)
-## [1] 1548313 ¸´ÁöÀÇ test MSE °¡ OLSÀÇ MSE º¸´Ù Å©´Ù.
+## [1] 1548313 ë¦¿ì§€ì˜ test MSE ê°€ OLSì˜ MSE ë³´ë‹¤ í¬ë‹¤.
 
 #d)
-fit.lasso <- glmnet(train.mat, College.train$Apps, alpha = 1, lambda = grid, thresh = 1e-12) #¶ó½î ±â¹ı
+fit.lasso <- glmnet(train.mat, College.train$Apps, alpha = 1, lambda = grid, thresh = 1e-12) #ë¼ì˜ ê¸°ë²•
 cv.lasso <- cv.glmnet(train.mat, College.train$Apps, alpha = 1, lambda = grid, thresh = 1e-12)
 bestlam.lasso <- cv.lasso$lambda.min
 bestlam.lasso
 
 pred.lasso <- predict(fit.lasso, s = bestlam.lasso, newx = test.mat)
 mean((pred.lasso - College.test$Apps)^2)
-##[1] 1548296 ¸´Áö¿Í ºñ½ÁÇÑ ¼öÁØÀÇ MSE
+##[1] 1548296 ë¦¿ì§€ì™€ ë¹„ìŠ·í•œ ìˆ˜ì¤€ì˜ MSE
 
 predict(fit.lasso, s = bestlam.lasso, type = "coefficients")
 
@@ -55,21 +55,26 @@ fit.pcr <- pcr(Apps ~ ., data = College.train, scale = TRUE, validation = "CV")
 validationplot(fit.pcr, val.type = "MSEP")
 pred.pcr <- predict(fit.pcr, College.test, ncomp = 10)
 mean((pred.pcr - College.test$Apps)^2)
-##[1] 1791589 pcr MSE °¡ ³ô°Ô ³ªÅ¸³².
+##[1] 1791589 pcr MSE ê°€ ê°€ì¥ ë†’ê²Œ ë‚˜íƒ€ë‚¨.
 
 fit.pls <- plsr(Apps ~ ., data = College.train, scale = TRUE, validation = "CV")
 validationplot(fit.pls, val.type = "MSEP")
 
 pred.pls <- predict(fit.pls, College.test, ncomp = 10)
 mean((pred.pls - College.test$Apps)^2)
-## ¶ó¼Ò¿Í ¸´Áöº¸´Ù ³ôÀº PLS MSE 
+## ë¼ì†Œì™€ ë¦¿ì§€ë³´ë‹¤ ë†’ì€ PLS MSE 
+## PLSëŠ” supervisedì´ë¯€ë¡œ biasëŠ” ê°ì†Œí•˜ì§€ë§Œ ê·¸ë§Œí¼ varianceê°€ ë†’ì•„ì§€ê¸°ì— ìƒëŒ€ì ìœ¼ë¡œ ì„±ëŠ¥ì´ ë–¨ì–´ì§ˆ ìˆ˜ ìˆìŒ
 
 
 #e)
-# R^2 ¸¦ È°¿ëÇÏ¿© ¸ğµ¨À» Æò°¡
+# R^2 ë¥¼ í™œìš©í•˜ì—¬ ëª¨ë¸ì„ í‰ê°€
 test.avg <- mean(College.test$Apps)
 lm.r2 <- 1 - mean((pred.lm - College.test$Apps)^2) / mean((test.avg - College.test$Apps)^2)
 ridge.r2 <- 1 - mean((pred.ridge - College.test$Apps)^2) / mean((test.avg - College.test$Apps)^2)
 lasso.r2 <- 1 - mean((pred.lasso - College.test$Apps)^2) / mean((test.avg - College.test$Apps)^2)
 pcr.r2 <- 1 - mean((pred.pcr - College.test$Apps)^2) / mean((test.avg - College.test$Apps)^2)
 pls.r2 <- 1 - mean((pred.pls - College.test$Apps)^2) / mean((test.avg - College.test$Apps)^2)
+
+# 0.86ì˜ pcr ì„ ì œì™¸í•˜ë©´ ëŒ€ë¶€ë¶„ 0.88ë¡œ ìœ ì‚¬í•œ ê°’ì„ ê°–ê³  ìˆë‹¤.
+# í˜„ ë°ì´í„°ì—ì„œëŠ” lasso ridgeì˜ MSE ê°’ì´ ê±°ì˜ ë™ì¼í•˜ì§€ë§Œ 
+#  ë°ì´í„° íŠ¹ì„±ì— ë”°ë¼ ë‹¤ë¥´ë¯€ë¡œ ì ì ˆíˆ ì„ íƒí•˜ë©´ ë  ë“¯ (ìœ ì˜ë¯¸í•œ ë³€ìˆ˜ê°€ ì ì„ë•ŒëŠ” lasso, ë§ì„ ë•ŒëŠ” Ridgeê°€ ë” ë†’ì€ ì„±ëŠ¥ì„ ë³´ì¸ë‹¤ê³  í•œë‹¤)
