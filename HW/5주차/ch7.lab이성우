@@ -19,27 +19,27 @@ coef(fit2a)
 fit2b=lm(wage~cbind(age,age^2,age^3,age^4),data=Wage)
 coef(fit2b)
 
-# I ¿Í cbind ·Î Çà·Ä¸¸µé¾îÁÜ 
+# I ì™€ cbind ë¡œ í–‰ë ¬ë§Œë“¤ì–´ì¤Œ 
 
-# gird »ı¼º, standard error ¸í½Ã
+# gird ìƒì„±, standard error ëª…ì‹œ
 
 agelims=range(age)
 age.grid=seq(from=agelims[1],to=agelims[2])
 preds=predict(fit,newdata=list(age=age.grid),se=TRUE)
 se.bands=cbind(preds$fit+2*preds$se.fit,preds$fit-2*preds$se.fit)
 
-# ±×·¡ÇÁ ±×¸®°í 4Â÷ ´ÙÇ×½ÄÀ¸·ÎºÎÅÍ fitÇÑ ¼± Ãß°¡
+# ê·¸ë˜í”„ ê·¸ë¦¬ê³  4ì°¨ ë‹¤í•­ì‹ìœ¼ë¡œë¶€í„° fití•œ ì„  ì¶”ê°€
 par(mfrow=c(1,2),mar=c(4.5,4.5,1,1),oma=c(0,0,4,0))
 plot(age,wage,xlim=agelims,cex=.5,col="darkgrey")
 title("Degree-4 Polynomial",outer=T)
 lines(age.grid,preds$fit,lwd=2,col="blue")
 matlines(age.grid,se.bands,lwd=1,col="blue",lty=3)
 
-# fitted value °ªÀÌ µ¿ÀÏÇÏ¹Ç·Î basis ÀÇ Á÷±³ ¿©ºÎ´Â »ó°ü¾øÀ½.
+# fitted value ê°’ì´ ë™ì¼í•˜ë¯€ë¡œ basis ì˜ ì§êµ ì—¬ë¶€ëŠ” ìƒê´€ì—†ìŒ.
 preds2=predict(fit2,newdata=list(age=age.grid),se=TRUE)
 max(abs(preds$fit-preds2$fit))
 
-# Â÷¼ö Á¤ÇÏ±â À§ÇØ ANOVA
+# ì°¨ìˆ˜ ì •í•˜ê¸° ìœ„í•´ ANOVA
 fit.1=lm(wage~age,data=Wage)
 fit.2=lm(wage~poly(age,2),data=Wage)
 fit.3=lm(wage~poly(age,3),data=Wage)
@@ -48,7 +48,7 @@ fit.5=lm(wage~poly(age,5),data=Wage)
 anova(fit.1,fit.2,fit.3,fit.4,fit.5)
 # 
 
-# Á÷±³ ´ÙÇ×½ÄÀ» ¸¸µå´Â poly() ¸¦ È°¿ëÇÏ¸é ANOVA º¸´Ù ´õ °£´ÜÇÏ°Ô p-value ±¸ÇÒ ¼ö ÀÖÀ½.
+# ì§êµ ë‹¤í•­ì‹ì„ ë§Œë“œëŠ” poly() ë¥¼ í™œìš©í•˜ë©´ ANOVA ë³´ë‹¤ ë” ê°„ë‹¨í•˜ê²Œ p-value êµ¬í•  ìˆ˜ ìˆìŒ.
 
 fit.1=lm(wage~education+age,data=Wage)
 fit.2=lm(wage~education+poly(age,2),data=Wage)
@@ -56,7 +56,7 @@ fit.3=lm(wage~education+poly(age,3),data=Wage)
 anova(fit.1,fit.2,fit.3)
 
 
-# logistic È¸±Í.
+# logistic íšŒê·€.
 fit=glm(I(wage>250)~poly(age,4),data=Wage,family=binomial)
 preds=predict(fit,newdata=list(age=age.grid),se=T)
 
@@ -68,7 +68,7 @@ se.bands = exp(se.bands.logit)/(1+exp(se.bands.logit))
 # getting the pred value by just setting the type 
 preds=predict(fit,newdata=list(age=age.grid),type="response",se=T)
 
-# ±×·¡ÇÁ
+# ê·¸ë˜í”„
 plot(age,I(wage>250),xlim=agelims,type="n",ylim=c(0,.2))
 points(jitter(age), I((wage>250)/5),cex=.5,pch="|",col="darkgrey")
 lines(age.grid,pfit,lwd=2, col="blue")
@@ -96,7 +96,7 @@ dim(bs(age,knots=c(25,40,60)))
 dim(bs(age,df=6))
 attr(bs(age,df=6),"knots")
 
-# knot ¹èÁ¤.
+# knot ë°°ì •.
 
 # natural spline
 # reducing dimension.
@@ -127,7 +127,7 @@ lines(age.grid,predict(fit,data.frame(age=age.grid)),col="red",lwd=2)
 lines(age.grid,predict(fit2,data.frame(age=age.grid)),col="blue",lwd=2)
 legend("topright",legend=c("Span=0.2","Span=0.5"),col=c("red","blue"),lty=1,lwd=2,cex=.8)
 
-#½ºÆÒ Å¬ ¶§ smoothÇÑ ¸ğ½À.
+#ìŠ¤íŒ¬ í´ ë•Œ smoothí•œ ëª¨ìŠµ.
 
 # gam.
 
